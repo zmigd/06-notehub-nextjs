@@ -1,19 +1,23 @@
+// app/layout.tsx
 import './globals.css';
+import TanStackProvider from '../components/TanStackProvider/TanStackProvider';
 import Header from '../components/Header/Header';
 import Footer from '../components/Footer/Footer';
 
 export const metadata = {
   title: 'NoteHub',
-  description: 'Simple and efficient note management app',
+  description: 'Manage your personal notes efficiently',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <body>
-        <Header />
-        <main>{children}</main>
-        <Footer />
+        <TanStackProvider>
+          <Header />
+          <main>{children}</main>
+          <Footer />
+        </TanStackProvider>
       </body>
     </html>
   );

@@ -1,37 +1,42 @@
+// lib/api.ts
+import axios, { AxiosResponse } from 'axios';
 import type { Note } from '../types/note';
-import axios from 'axios';
 
+const BASE_URL = 'https://notehub-public.goit.study/api';
 const token = process.env.NEXT_PUBLIC_NOTEHUB_TOKEN;
 
-const axiosInstance = axios.create({
-  baseURL: 'https://notehub-public.goit.study/api',
-  headers: { Authorization: `Bearer ${token}` },
+const api = axios.create({
+  baseURL: BASE_URL,
+  headers: {
+    Authorization: `Bearer ${token}`,
+    'Content-Type': 'application/json',
+  },
 });
 
-// список нотаток
-export const getNotes = async (): Promise<Note[]> => {
-  const response = await axiosInstance.get<Note[]>('/notes');
-  return Array.isArray(response.data) ? response.data : [];
-};
+export interface FetchNotesResponse {
+  notes: Note[];
+  totalPages: number;
+}
 
-// отримання однієї нотатки за id
-export const fetchNoteById = async (id: string | number): Promise<Note> => {
-  const response = await axiosInstance.get<Note>(`/notes/${id}`);
+export async function fetchNotes(params: { page?: number; perPage?: number; search?: string }): Promise<FetchNotesResponse> {
+  const { page = 1, perPage = 12, search = '' } = params;
+  const response: AxiosResponse<FetchNotesResponse> = await api.get('/notes', {
+    params: { page, perPage, search },
+  });
   return response.data;
-};
+}
 
-// створення нотатки
-export const createNote = async (payload: {
-  title: string;
-  content?: string;
-  tag: string;
-}): Promise<Note> => {
-  const response = await axiosInstance.post<Note>('/notes', payload);
+export async function fetchNoteById(id: string): Promise<Note> {
+  const response: AxiosResponse<Note> = await api.get(`/notes/${id}`);
   return response.data;
-};
+}
 
-// видалення нотатки
-export const deleteNote = async (id: string): Promise<Note> => {
-  const response = await axiosInstance.delete<Note>(`/notes/${id}`);
+export async function createNote(payload: { title: string; content?: string; tag: string }): Promise<Note> {
+  const response: AxiosResponse<Note> = await api.post('/notes', payload);
   return response.data;
-};
+}
+
+export async function deleteNote(id: string): Promise<Note> {
+  const response: AxiosResponse<Note> = await api.delete(`/notes/${id}`);
+  return response.data;
+}
