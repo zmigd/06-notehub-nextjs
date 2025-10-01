@@ -1,10 +1,15 @@
-// app/notes/[id]/error.tsx
-'use client';
+"use client";
 
-interface ErrorProps {
+import css from "./error.module.css";
+
+type ErrorMessageProps = {
   error: Error;
-}
+};
 
-export default function NoteDetailsError({ error }: ErrorProps) {
-  return <p>Could not fetch note details. {error.message}</p>;
+export default function ErrorMessage({ error }: ErrorMessageProps) {
+  return (
+    <p className={css.text}>
+      Could not fetch the list of notes. {error.message}
+    </p>
+  );
 }
